@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+{% block content %}
+
+    <img src="{{ automobilis.cover.url }}" style="margin-bottom: 20px; width: 250px; height: auto" alt="...">
+
+    <h1 class="text-center">About car</h1>
+
+    <p>{{ automobilis.car_model_id.marke }}</p>
+    <p>{{ automobilis.customer }}</p>
+    <p>{{ automobilis.vin_code }}</p>
+    <p>{{ automobilis.valstybinis_nr }}</p>
+
+    <p>{{ automobilis.description | safe }}</p>
+
+{% endblock %}

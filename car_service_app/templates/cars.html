@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+{% block content %}
+    {% load static %}
+    <h1 class="text-center">All cars</h1>
+    {% if automobiliai %}
+        <div class="row">
+            {% for auto in automobiliai %}
+                <div class="col-mo-4 d-flex align-items-stretch">
+                    <div class="card mb-4 shadow-sm">
+                        {% if auto.cover %}
+                            <img class="card-img-top" src="{{ auto.cover.url }}" alt="{{ auto.car_model_id.marke }}"
+                                 style="margin-bottom: 20px; width: 200px; height: auto">
+                        {% else %}
+                            <img src="{% static 'img/no_image.png' %}" class="card-img-top"
+                                 style="margin-bottom: 20px; width: 200px; height: auto" alt="...">
+                        {% endif %}
+                        <div class="card-body">
+                            <h6 class="card-subtitle mb-2 text-muted"> {{ auto.valstybinis_nr }}</h6>
+                            <p class="card-text"><a href="{{ auto.id }}">{{ auto.customer }}</a></p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>nera knygu</p>
+    {% endif %}
+    {#    <h1 class="text-center">All cars</h1>#}
+    {#    {% for auto in automobiliai %}#}
+    {#        <p><a href="{% url 'car' auto.id %}">{{ auto.car_model_id }}</a></p>#}
+    {#    {% endfor %}#}
+
+    <div class="container puslapiai">
+        <nav aria-label="...">
+            {% if automobiliai.has_other_pages %}
+                <ul class="pagination pagination-sm justify-content-end">
+                    {% for i in automobiliai.paginator.page_range %}
+                        {% if automobiliai.number == i %}
+                            <li class="page-item active">
+                                <a class="page-link">{{ i }}</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+
+            {% endif %}
+        </nav>
+    </div>
+
+
+{% endblock %}

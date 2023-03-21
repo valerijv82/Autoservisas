@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+    <h1>Mano serviso uzsakymai</h1>
+
+    {% if order_list %}
+        {% for order in order_list %}
+            <p>{{ order.car_id.car_model_id.marke }} - Order date: {{ order.data }}
+                {% if order.is_overdue %}
+                    <span style="color: red">Veluojame grazinti</span>
+
+                {% endif %}
+            </p>
+        {% endfor %}
+
+    {% else %}
+        Siuo metu uzsakymu neturite
+    {% endif %}
+
+
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+    <h1>Search results</h1>
+    <p style="color: green">tavo paieska "{{ query }}"</p>
+    {% if cars %}
+
+
+    {% for car in cars %}
+    <li>
+        <a href="{% url 'car' car.id %}">{{ car.car_model_id }}</a> {{ car.customer }}
+    </li>
+    {% endfor %}
+        {% else %}
+        <h3 style="color: coral">Oops , nieko</h3>
+    {% endif %}
+
+{% endblock %}
