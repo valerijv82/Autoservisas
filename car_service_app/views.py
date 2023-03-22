@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.shortcuts import render, redirect, reverse
@@ -8,7 +9,7 @@ from django.contrib.auth.forms import User
 from django.views.decorators.csrf import csrf_protect
 from django.contrib import messages
 from django.views.generic.edit import FormMixin
-from .forms import OrderReviewForm
+from .forms import OrderReviewForm, ProfilisUpdateForm, UserUpdateForm
 
 from .models import CarModel, Car, Order, OrderLine, Service
 
@@ -72,7 +73,7 @@ class UzsakymaiDetailView(FormMixin, generic.DetailView):
 
     # nurodome, kur atsidursime komentaro sėkmės atveju.
     def get_success_url(self):
-        return reverse('my_orders', kwargs={'pk': self.object.id})
+        return reverse('uzsakymas', kwargs={'pk': self.object.id})
 
     # standartinis post metodo perrašymas, naudojant FormMixin, galite kopijuoti tiesiai į savo projektą.
     def post(self, request, *args, **kwargs):
@@ -140,6 +141,28 @@ def register(request):
             return redirect('register')
     return render(request, 'register.html')
 
+
+@login_required
+def profile(request):
+    if request.method == 'POST':
+        u_form = UserUpdateForm(request.POST, instance=request.user)
+        p_form = ProfilisUpdateForm(request.POST, request.FILES, instance=request.user.userprofile)
+
+        if u_form.is_valid() and p_form.is_valid():
+            u_form.save()
+            p_form.save()
+            messages.success(request, 'Profilis atnaujintas')
+            return redirect('profile')
+    else:
+        u_form = UserUpdateForm(instance=request.user)
+        p_form = ProfilisUpdateForm(instance=request.user.userprofile)
+
+    context = {
+        'u_form': u_form,
+        'p_form': p_form,
+    }
+
+    return render(request, 'user_profile.html', context=context)
 
 # class OrderDetailView(FormMixin, generic.DetailView):
 #     model = Order

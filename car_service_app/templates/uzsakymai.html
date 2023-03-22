@@ -2,21 +2,22 @@
 
 {% block content %}
 
-<h3>Visi užsakymai</h3>
+    <h3>Visi užsakymai</h3>
 
-{% if order_list %}
+    {% if order_list %}
 
-<ul>
-    {% for uzsakymas in order_list %}
-        <li><a href="{% url 'uzsakymas' uzsakymas.id %}">{{ uzsakymas.car_id.customer }}</a></li>
-    {% endfor %}
-</ul>
+        <ul>
+            {% for uzsakymas in order_list %}
 
-{% else %}
-    <p>Užsakymų nėra.</p>
-{% endif %}
+                <li><a href="{% url 'uzsakymas' uzsakymas.id %}">{{ uzsakymas.car_id.customer }}</a></li>
+            {% endfor %}
+        </ul>
 
-        <div class="pagination">
+    {% else %}
+        <p>Užsakymų nėra.</p>
+    {% endif %}
+
+    <div class="pagination">
         <span class="step-links">
             {% if page_obj.has_previous %}
                 <a href="?page=1">&laquo; pirmas</a>
@@ -25,10 +26,10 @@
             <span class="current">
             {{ page_obj.number }} is {{ page_obj.paginator.num_pages }}
         </span>
-        {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}">pirmyn</a>
-            <a href="?page={{ page_obj.paginator.num_pages }}">paskutinis &raquo;</a>
-        {% endif %}
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">pirmyn</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}">paskutinis &raquo;</a>
+            {% endif %}
         </span>
     </div>
 

@@ -30,7 +30,9 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'car_service_app',
+    'car_service_app.apps.CarServiceAppConfig',
+    'crispy_forms',
+    # 'car_service_app',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -168,3 +170,5 @@ TINYMCE_DEFAULT_CONFIG = {
     'menubar': True,
     'statusbar': True,
 }
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'

@@ -7,6 +7,8 @@
 
     {% if order_list %}
         {% for order in order_list %}
+            <img src="{{ order.useris.userprofile.nuotrauka.url }}" alt="" class="img-fluid rounded-circle">
+
             <p>{{ order.car_id.car_model_id.marke }} - Order date: {{ order.data }}
                 {% if order.is_overdue %}
                     <span style="color: red">Veluojame grazinti</span>

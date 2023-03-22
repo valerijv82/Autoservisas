@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load crispy_forms_filters %}
+{% load static %}
+
+{% block content %}
+    <h1>Profilis</h1>
+    <div class="content-section">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-danger" role="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+        <div class="media">
+
+            <img src="{{ user.userprofile.nuotrauka.url }}" alt="" class="img-fluid rounded-circle">
+            <div class="media-body">
+                <h2 class="account-heading">{{ user.username }}</h2>
+                <p class="text-secondary">
+                    {{ user.email }}
+                </p>
+
+            </div>
+
+        </div>
+
+        <form action="" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">
+                    Profilio info
+                </legend>
+                {{ f }}
+                {{ u_form|crispy }}
+                {{ p_form|crispy }}
+            </fieldset>
+            <div class="form-group">
+                <button class="btn btn-outline-info" type="submit">Atnaujinti</button>
+            </div>
+        </form>
+    </div>
+
+
+{% endblock %}

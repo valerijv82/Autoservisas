@@ -1,3 +1,4 @@
+from PIL import Image
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
@@ -118,3 +119,19 @@ class OrderReview(models.Model):
         verbose_name = "Comment"
         verbose_name_plural = "Comment's"
         ordering = ['-date_created']
+
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    nuotrauka = models.ImageField(default='no_image.png', upload_to='profile_pics')
+
+    def __str__(self):
+        return f'{self.user.username} profilis'
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        print(self.nuotrauka.path)
+        img = Image.open(self.nuotrauka.path)
+        if img.height > 300 or img.width > 300:
+            img.thumbnail((300, 300))
+            img.save(self.nuotrauka.path)

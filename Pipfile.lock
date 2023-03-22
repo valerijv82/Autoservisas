@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "0560408f7655102498ef257e9f3016e8990e428ed972eed4d3fb9bd5b232779b"
+            "sha256": "400d1f01465904485843b196e0cb04fcca243f74983c60313817959fb167a01d"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -53,13 +53,21 @@
             "index": "pypi",
             "version": "==4.1.7"
         },
-        "django-tinymce": {
+        "django-crispy-forms": {
             "hashes": [
-                "sha256:ebe7e39e080415a0d4ca339f0f159754a7cc1dc7cd5276f32f9d3db3220134f8",
-                "sha256:f9d3758670ad55912cbabdd41a14e0b6cfda47868f9c6d92a4480ca320356d53"
+                "sha256:35887b8851a931374dd697207a8f56c57a9c5cb9dbf0b9fa54314da5666cea5b",
+                "sha256:bc4d2037f6de602d39c0bc452ac3029d1f5d65e88458872cc4dbc01c3a400604"
             ],
             "index": "pypi",
-            "version": "==3.5.0"
+            "version": "==1.14.0"
+        },
+        "django-tinymce": {
+            "hashes": [
+                "sha256:6f4f6227c2c608052081a436a1e3054c441caae24c9e0c8c3010536e24749e29",
+                "sha256:da5732413f51cf854352e3148f06f170b59d95a6c6a43fd9f7ccfdd1849f4bf9"
+            ],
+            "index": "pypi",
+            "version": "==3.6.1"
         },
         "pillow": {
             "hashes": [
