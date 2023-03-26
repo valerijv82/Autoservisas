@@ -1,25 +1,33 @@
 {% extends "base.html" %}
-{% load static %}
 
 {% block content %}
-
-    <h1>Mano serviso uzsakymai</h1>
-
-    {% if order_list %}
-        {% for order in order_list %}
-            <img src="{{ order.useris.userprofile.nuotrauka.url }}" alt="" class="img-fluid rounded-circle">
-
-            <p>{{ order.car_id.car_model_id.marke }} - Order date: {{ order.data }}
-                {% if order.is_overdue %}
-                    <span style="color: red">Veluojame grazinti</span>
-
+    <h1>Mano užsakymas</h1>
+    <article class="media content-section">
+        <div class="media-body">
+            <div class="article-metadata">
+                <a class="mr-2">{{ object.useris }}</a>
+                <small class="text-muted">{{ object.data|date:"Y-m-d, f" }}</small>
+            </div>
+            <p class="article-content">{{ object.car_id }}</p>
+            <p><strong>Suma:</strong> {{ object.is_viso }}</p>
+            <div style="margin-left:20px;margin-top:20px">
+                {% if object.eilutes.all %}
+                    <h4>Darbai:</h4>
+                    {% for eilute in object.eilutes.all %}
+                        <hr>
+                        <p><strong>Paslauga:</strong> {{ eilute.service_id }}
+                            <strong>Kiekis:</strong> {{ eilute.quantity }}<strong> Kaina:</strong> {{ eilute.price }}
+                            <strong> Suma:</strong> {{ eilute.suma }}</p>
+                    {% endfor %}
                 {% endif %}
-            </p>
-        {% endfor %}
-
-    {% else %}
-        Siuo metu uzsakymu neturite
-    {% endif %}
-
-
+            </div>
+            <br>
+            {% if object.useris == user %}
+                <div>
+                    <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'update_my_order' object.id %}">Redaguoti</a>
+                    <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'my-order-delete' object.id %}">Ištrinti</a>
+                </div>
+            {% endif %}
+        </div>
+    </article>
 {% endblock %}

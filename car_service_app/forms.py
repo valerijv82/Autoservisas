@@ -1,6 +1,5 @@
 from django.contrib.auth.models import User
-
-from .models import OrderReview, UserProfile
+from .models import OrderReview, UserProfile, Order
 from django import forms
 
 
@@ -23,3 +22,8 @@ class ProfilisUpdateForm(forms.ModelForm):
     class Meta:
         model = UserProfile
         fields = ['nuotrauka']
+
+
+class DateInput(forms.DateInput):
+    input_type = 'date'
+

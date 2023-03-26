@@ -5,6 +5,17 @@ from django.utils import timezone
 from tinymce.models import HTMLField
 
 
+class Service(models.Model):
+    name = models.CharField('Pavadinimas', max_length=200)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'Paslauga'
+        verbose_name_plural = 'Paslaugos'
+
+
 class CarModel(models.Model):
     marke = models.CharField("Marke", max_length=100)
     model = models.CharField("Modelis", max_length=100)
@@ -20,7 +31,7 @@ class CarModel(models.Model):
 
 
 class Car(models.Model):
-    cover = models.ImageField('Virselis', upload_to='covers', null=True, blank=True)
+    cover = models.ImageField('Virselis', upload_to='covers', default='no_car.png', null=True, blank=True)
     valstybinis_nr = models.CharField("Valstybinis numeris", max_length=12)
     car_model_id = models.ForeignKey("CarModel", on_delete=models.SET_NULL, null=True)
     vin_code = models.CharField('VIN', max_length=20)
@@ -37,10 +48,27 @@ class Car(models.Model):
         return f'{self.customer}'
 
 
+class Paslaugos_kaina(models.Model):
+    service_id = models.ForeignKey('Service', on_delete=models.SET_NULL, null=True)
+    car_ids = models.ManyToManyField(CarModel)
+    price = models.FloatField("Kaina")
+
+    def __str__(self):
+        return f"{self.service_id}: {self.price}"
+
+    def automobiliai(self):
+        return ', '.join(f"{auto.marke} {auto.model}" for auto in self.car_ids.all())
+
+    automobiliai.short_description = 'Automobiliai'
+
+    class Meta:
+        verbose_name = 'Paslaugos kaina'
+        verbose_name_plural = 'Paslaugų kainos'
+
+
 class Order(models.Model):
-    data = models.DateTimeField("Data", null=True, blank=True)
+    data = models.DateField("Data", null=True, blank=True)
     car_id = models.ForeignKey("Car", on_delete=models.SET_NULL, null=True)
-    suma = models.CharField("Suma", max_length=10)
     useris = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, default=None)
 
     SERVISAI = (
@@ -55,10 +83,10 @@ class Order(models.Model):
         db_table = 'order'
         verbose_name = 'Order'
         verbose_name_plural = 'order'
-        ordering = ['data', 'suma']
+        ordering = ['data']
 
     def __str__(self):
-        return f'Order: {self.car_id} - {self.data} - suma: {self.suma}'
+        return f'Order: {self.car_id} - {self.data}'
 
     @property
     def is_overdue(self):
@@ -76,7 +104,7 @@ class Order(models.Model):
 
 class OrderLine(models.Model):
     service_id = models.ForeignKey("Service", on_delete=models.SET_NULL, null=True)
-    order_id = models.ForeignKey("Order", on_delete=models.SET_NULL, null=True)
+    order_id = models.ForeignKey("Order", related_name='eilutes', on_delete=models.SET_NULL, null=True)
     quantity = models.CharField("Kiekis", max_length=10)
     price = models.CharField("Kaina", max_length=10)
 
@@ -89,24 +117,9 @@ class OrderLine(models.Model):
     def __str__(self):
         return 'Order Line'
 
-
-class Service(models.Model):
-    SERVICES = (
-        ('p', 'patikra'),
-        ('a', 'alyva'),
-        ('s', 'sankaba'),
-    )
-    name = models.CharField("Paslaugos pavadinimas", choices=SERVICES, blank=True, default='p', max_length=5)
-    price = models.CharField("Paslaugos kaina", max_length=10)
-
-    class Meta:
-        db_table = 'service'
-        verbose_name = 'Service'
-        verbose_name_plural = 'service'
-        ordering = ['name', 'price']
-
-    def __str__(self):
-        return f'{self.name}'
+    @property
+    def suma(self):
+        return float(self.quantity) * float(self.price)
 
 
 class OrderReview(models.Model):
@@ -125,12 +138,16 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     nuotrauka = models.ImageField(default='no_image.png', upload_to='profile_pics')
 
+    class Meta:
+        verbose_name = 'UserProfile'
+        verbose_name_plural = 'UserProfiliai'
+
     def __str__(self):
         return f'{self.user.username} profilis'
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
-        print(self.nuotrauka.path)
+        # print(self.nuotrauka.path)
         img = Image.open(self.nuotrauka.path)
         if img.height > 300 or img.width > 300:
             img.thumbnail((300, 300))

@@ -1,20 +1,30 @@
 {% extends "base.html" %}
-
 {% block content %}
 
     <h3>Visi užsakymai</h3>
-
     {% if order_list %}
-
-        <ul>
+        <div class="row">
             {% for uzsakymas in order_list %}
+                <div class="col-md-4 d-flex align-items-stretch">
+                    <div class="card mb-4 shadow-sm">
+                        <img src="{{ uzsakymas.useris.userprofile.nuotrauka.url }}" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <p class="card-text"><a
+                                    href="{{ uzsakymas.id }}">{{ uzsakymas.car_id.car_model_id.marke }} {{ uzsakymas.car_id.car_model_id.model }}</a>
+                            </p>
 
-                <li><a href="{% url 'uzsakymas' uzsakymas.id %}">{{ uzsakymas.car_id.customer }}</a></li>
+                            <h6 class="card-subtitle mb-2 text-muted"></h6>
+                            <h6 class="card-subtitle mb-2 text-muted">{{ uzsakymas.car_id.customer }}</h6>
+{#                            <h6 class="card-subtitle mb-2 text-muted">{{ uzsakymas.useris.username }}</h6>#}
+                            <h6 class="card-subtitle mb-2 text-muted">{{ uzsakymas.data|date:"Y-m-d, f" }}</h6>
+                        </div>
+                    </div>
+                </div>
             {% endfor %}
-        </ul>
-
+        </div>
     {% else %}
         <p>Užsakymų nėra.</p>
+
     {% endif %}
 
     <div class="pagination">
@@ -32,6 +42,4 @@
             {% endif %}
         </span>
     </div>
-
-
 {% endblock %}

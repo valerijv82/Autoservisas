@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+    <h1>Mano serviso uzsakymai</h1>
+    {% if order_list %}
+        {% for uzsakymas in order_list %}
+            <article class="media content-section">
+                <div class="media-body">
+                    <div class="article-metadata">
+                        <a class="mr-2">{{ uzsakymas.useris }}</a>
+                        <small class="text-muted">{{ uzsakymas.data|date:"Y-m-d, f" }}</small>
+                    </div>
+                    <p class="article-content">{{ uzsakymas.car_id }}</p>
+                    <p class="card-text"><a href="{{ uzsakymas.id }}">Peržiūrėti</a></p>
+                </div>
+            </article>
+            <hr>
+        {% endfor %}
+    {% else %}
+        <p>Neturite užsakymų.</p>
+    {% endif %}
+
+
+{% endblock %}

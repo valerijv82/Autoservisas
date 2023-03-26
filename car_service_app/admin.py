@@ -26,17 +26,14 @@ class CarAdmin(admin.ModelAdmin):
         return obj.car_model_id.model
 
 
-class ServiceAdmin(admin.ModelAdmin):
-    list_display = ('name', 'price')
-
-
 class OrderReviewAdmin(admin.ModelAdmin):
     list_display = ('order', 'date_created', 'reviewer', 'content')
+
 
 admin.site.register(Car, CarAdmin)
 admin.site.register(CarModel)
 admin.site.register(Order, OrderAdmin)
 admin.site.register(OrderLine)
-admin.site.register(Service, ServiceAdmin)
+admin.site.register(Service)
 admin.site.register(OrderReview, OrderReviewAdmin)
 admin.site.register(UserProfile)

@@ -18,15 +18,22 @@
                                  style="margin-bottom: 20px; width: 200px; height: auto" alt="...">
                         {% endif %}
                         <div class="card-body">
-                            <h6 class="card-subtitle mb-2 text-muted"> {{ auto.valstybinis_nr }}</h6>
-                            <p class="card-text"><a href="{{ auto.id }}">{{ auto.customer }}</a></p>
+                            <p class="card-text"><a href="{{ auto.id }}">{{ auto.car_model_id.model }} {{ auto.car_model_id.marke }}</a></p>
+                            <h6 class="card-subtitle mb-2 text-muted"></h6>
+                            <h6 class="card-subtitle mb-2 text-muted">{{ auto.customer }}</h6>
+                            <h6 class="card-subtitle mb-2 text-muted">{{ auto.valstybinis_nr }}</h6>
+                            <h6 class="card-subtitle mb-2 text-muted">{{ auto.vin_code }}</h6>
                         </div>
+{#                        <div class="card-body">#}
+{#                            <h6 class="card-subtitle mb-2 text-muted"> {{ auto.valstybinis_nr }}</h6>#}
+{#                            <p class="card-text"><a href="{{ auto.id }}">{{ auto.customer }}</a></p>#}
+{#                        </div>#}
                     </div>
                 </div>
             {% endfor %}
         </div>
     {% else %}
-        <p>nera knygu</p>
+        <p>No cars</p>
     {% endif %}
     {#    <h1 class="text-center">All cars</h1>#}
     {#    {% for auto in automobiliai %}#}

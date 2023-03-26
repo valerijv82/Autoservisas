@@ -12,6 +12,7 @@
         <p><strong>Data: </strong>{{ order.data }}</p>
         <p><strong>Automobilio VIN kodas: </strong>{{ order.car_id.vin_code }}</p>
         <p>Uzsakymo suma: <span style="color: blueviolet">{{ order.is_viso }}</span></p>
+        <p>Uzsakymo suma: <span style="color: blueviolet">{{ order.get_servis_display }}</span></p>
     </div>
     <h4>Atsiliepimai:</h4>
 
@@ -23,7 +24,7 @@
             <p>{{ review.content }}</p>
         {% endfor %}
     {% else %}
-        <p>Knyga neturi atsiliepimų</p>
+        <p>No comments</p>
     {% endif %}
     {% if user.is_authenticated %}
         <div class="fieldWrapper">

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load crispy_forms_filters %}
+{% block content %}
+    <div class="content-section">
+        <form method="POST" action="" enctype="multipart/form-data">
+            {% csrf_token %}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Order create form</legend>
+                {{ form|crispy }}
+            </fieldset>
+            <div class="form-group">
+                <button class="btn btn-outline-info" type="submit">Išsaugoti</button>
+{#                <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'my-order-delete' object.id %}">Ištrinti</a>#}
+
+            </div>
+        </form>
+    </div>
+{% endblock content %}

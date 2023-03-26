@@ -1,17 +1,15 @@
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db.models import Q
-from django.shortcuts import render, redirect, reverse
+from django.shortcuts import render, redirect, reverse, get_object_or_404
 from django.views import generic
 from django.core.paginator import Paginator
-
 from django.contrib.auth.forms import User
 from django.views.decorators.csrf import csrf_protect
 from django.contrib import messages
 from django.views.generic.edit import FormMixin
 from .forms import OrderReviewForm, ProfilisUpdateForm, UserUpdateForm
-
-from .models import CarModel, Car, Order, OrderLine, Service
+from .models import Car, Order, Service
 
 
 def home(request):
@@ -25,50 +23,41 @@ def home(request):
 
 def index(request):
     automobiliu_kiekis = Car.objects.all().count()
-    atliktu_uzsakymu_kiekis = Order.objects.all().count()
-    # paslaugu_kiekis = Service.objects.filter(name__exact='p').all().count()
+    atliktu_uzsakymu_kiekis = Order.objects.filter(servis__exact='a').count()
     paslaugu_kiekis = Service.objects.all().count()
-    servisu_kiekis = Order.objects.all()
 
     context = {
         'automobiliu_kiekis': automobiliu_kiekis,
         'atliktu_uzsakymu_kiekis': atliktu_uzsakymu_kiekis,
         'paslaugu_kiekis': paslaugu_kiekis,
-        'servisu_kiekis': servisu_kiekis,
     }
     return render(request, 'index.html', context=context)
 
 
 def automobiliai(request):
-    paginator = Paginator(Car.objects.all(), 2)
+    paginator = Paginator(Car.objects.all(), 5)
     page_number = request.GET.get('page')
-    paged_authors = paginator.get_page(page_number)
-    return render(request, 'cars.html', {'automobiliai': paged_authors})
-
-    # autos = Car.objects.all()
-    # context = {
-    #     'automobiliai': autos
-    # }
-    # return render(request, 'cars.html', context=context)
+    paged_cars = paginator.get_page(page_number)
+    return render(request, 'cars.html', {'automobiliai': paged_cars})
 
 
 def automobilis(request, auto_id):
-    auto = Car.objects.get(pk=auto_id)
+    auto = get_object_or_404(Car, pk=auto_id)
     context = {
         'automobilis': auto
     }
     return render(request, 'car.html', context=context)
 
 
-class UzsakymaiView(generic.ListView):
+class OrdersListView(generic.ListView):
     model = Order
     template_name = "uzsakymai.html"
-    paginate_by = 2
+    paginate_by = 5
 
 
-class UzsakymaiDetailView(FormMixin, generic.DetailView):
+class OrderDetailView(FormMixin, generic.DetailView):
     model = Order
-    template_name = 'uzsakymai_detail.html'
+    template_name = 'uzsakymo_details.html'
     form_class = OrderReviewForm
 
     # nurodome, kur atsidursime komentaro sėkmės atveju.
@@ -89,7 +78,7 @@ class UzsakymaiDetailView(FormMixin, generic.DetailView):
         form.instance.order = self.object
         form.instance.reviewer = self.request.user
         form.save()
-        return super(UzsakymaiDetailView, self).form_valid(form)
+        return super(OrderDetailView, self).form_valid(form)
 
 
 def search(request):
@@ -103,13 +92,18 @@ def search(request):
     return render(request, 'search.html', {'cars': search_results, 'query': query})
 
 
-class LoadCarsByListView(LoginRequiredMixin, generic.ListView):
-    model = Car
-    template_name = 'user_order.html'
+class UserOrdersListView(LoginRequiredMixin, generic.ListView):
+    model = Order
+    template_name = 'user_orders.html'
     paginate_by = 5
 
     def get_queryset(self):
-        return Order.objects.filter(useris=self.request.user)
+        return Order.objects.filter(useris=self.request.user).order_by('data')
+
+
+class UserOrderDetailView(LoginRequiredMixin, generic.DetailView):
+    model = Order
+    template_name = 'user_order.html'
 
 
 @csrf_protect
@@ -164,27 +158,38 @@ def profile(request):
 
     return render(request, 'user_profile.html', context=context)
 
-# class OrderDetailView(FormMixin, generic.DetailView):
-#     model = Order
-#     template_name = 'uzsakymai_detail.html'
-#     form_class = OrderReviewForm
-#
-#     # nurodome, kur atsidursime komentaro sėkmės atveju.
-#     def get_success_url(self):
-#         return reverse('my_orders', kwargs={'pk': self.object.id})
-#
-#     # standartinis post metodo perrašymas, naudojant FormMixin, galite kopijuoti tiesiai į savo projektą.
-#     def post(self, request, *args, **kwargs):
-#         self.object = self.get_object()
-#         form = self.get_form()
-#         if form.is_valid():
-#             return self.form_valid(form)
-#         else:
-#             return self.form_invalid(form)
-#
-#     # štai čia nurodome, kad knyga bus būtent ta, po kuria komentuojame, o vartotojas bus tas, kuris yra prisijungęs.
-#     def form_valid(self, form):
-#         form.instance.order = self.object
-#         form.instance.reviewer = self.request.user
-#         form.save()
-#         return super(OrderDetailView, self).form_valid(form)
+
+class NewOrderByUserCreateView(LoginRequiredMixin, generic.CreateView):
+    model = Order
+    fields = ['car_id', 'data', 'servis']
+    success_url = "/service/my_orders/"
+    template_name = 'user_order_form.html'
+
+    def form_valid(self, form):
+        form.instance.useris = self.request.user
+        return super().form_valid(form)
+
+
+class MyOrderUpdateView(LoginRequiredMixin, UserPassesTestMixin, generic.UpdateView):
+    model = Order
+    fields = ['car_id', 'data', 'servis']
+    success_url = "/service/uzsakymai/"
+    template_name = 'user_order_form.html'
+
+    def form_valid(self, form):
+        form.instance.useris = self.request.user
+        return super().form_valid(form)
+
+    def test_func(self):
+        order = self.get_object()
+        return self.request.user == order.useris
+
+
+class OrderByUserDeleteView(LoginRequiredMixin, UserPassesTestMixin, generic.DeleteView):
+    model = Order
+    success_url = "/service/uzsakymai/"
+    template_name = 'user_order_delete.html'
+
+    def test_func(self):
+        order = self.get_object()
+        return self.request.user == order.useris
