@@ -8,8 +8,8 @@ from django.contrib.auth.forms import User
 from django.views.decorators.csrf import csrf_protect
 from django.contrib import messages
 from django.views.generic.edit import FormMixin
-from .forms import OrderReviewForm, ProfilisUpdateForm, UserUpdateForm
-from .models import Car, Order, Service
+from .forms import OrderReviewForm, ProfilisUpdateForm, UserUpdateForm, UserOrderCreateForm, ServiseQuantityPriceForm
+from .models import Car, Order, Service, OrderLine
 
 
 def home(request):
@@ -104,6 +104,49 @@ class UserOrdersListView(LoginRequiredMixin, generic.ListView):
 class UserOrderDetailView(LoginRequiredMixin, generic.DetailView):
     model = Order
     template_name = 'user_order.html'
+    # form_model = ServiseQuantityPriceForm
+
+    # def get_context_data(self, **kwargs):
+    #     context = super(UserOrderDetailView, self).get_context_data(**kwargs)
+    #     context['order_line'] = OrderLine.objects.filter(order_id=self.get_object())
+    #     return context
+
+
+class CreateLine(LoginRequiredMixin, generic.CreateView):
+    model = OrderLine
+    fields = ['service_id', 'order_id', 'quantity', 'price']
+    # success_url = "/service/my_orders/"
+    template_name = 'update_orderline.html'
+
+    def form_valid(self, form):
+        form.instance.order_id = get_object_or_404(Order, pk=self.kwargs['uzsakymo_pk'])
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse('my_order', args=[str(self.kwargs['uzsakymo_pk'])])
+
+
+class UpdateLine(LoginRequiredMixin, generic.UpdateView):
+    model = OrderLine
+    fields = ['service_id', 'order_id', 'quantity', 'price']
+    # success_url = "/service/my_orders/"
+    template_name = 'update_orderline.html'
+
+    def form_valid(self, form):
+        form.instance.order_id = get_object_or_404(Order, pk=self.kwargs['uzsakymo_pk'])
+        return super().form_valid(form)
+
+    def get_success_url(self) -> str:
+        return reverse('my_order', args=[str(self.kwargs['uzsakymo_pk'])])
+
+
+class DeleteLine(LoginRequiredMixin, generic.DeleteView):
+    model = OrderLine
+    success_url = '/service/my_orders/'
+    template_name = 'delete_orderline.html'
+
+    def get_success_url(self) -> str:
+        return reverse('my_order', args=[str(self.kwargs['line_pk'])])
 
 
 @csrf_protect
@@ -161,9 +204,10 @@ def profile(request):
 
 class NewOrderByUserCreateView(LoginRequiredMixin, generic.CreateView):
     model = Order
-    fields = ['car_id', 'data', 'servis']
+    # fields = ['car_id', 'data', 'servis']
     success_url = "/service/my_orders/"
     template_name = 'user_order_form.html'
+    form_class = UserOrderCreateForm
 
     def form_valid(self, form):
         form.instance.useris = self.request.user
@@ -173,7 +217,7 @@ class NewOrderByUserCreateView(LoginRequiredMixin, generic.CreateView):
 class MyOrderUpdateView(LoginRequiredMixin, UserPassesTestMixin, generic.UpdateView):
     model = Order
     fields = ['car_id', 'data', 'servis']
-    success_url = "/service/uzsakymai/"
+    success_url = "/service/my_orders/"
     template_name = 'user_order_form.html'
 
     def form_valid(self, form):
@@ -187,7 +231,7 @@ class MyOrderUpdateView(LoginRequiredMixin, UserPassesTestMixin, generic.UpdateV
 
 class OrderByUserDeleteView(LoginRequiredMixin, UserPassesTestMixin, generic.DeleteView):
     model = Order
-    success_url = "/service/uzsakymai/"
+    success_url = "/service/my_orders/"
     template_name = 'user_order_delete.html'
 
     def test_func(self):

@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from .models import OrderReview, UserProfile, Order
+from .models import OrderReview, UserProfile, Order, OrderLine
 from django import forms
 
 
@@ -27,3 +27,33 @@ class ProfilisUpdateForm(forms.ModelForm):
 class DateInput(forms.DateInput):
     input_type = 'date'
 
+
+# Dėmesio: jei lauke norite nustatyti DateTime lauką, tai yra ir datą ir laiką,
+# DateInput klasėje input_type reikšmę pakeiskite iš 'date' į "datetime-local".
+
+class UserOrderCreateForm(forms.ModelForm):
+    class Meta:
+        model = Order
+        fields = ['car_id', 'data', 'servis']
+        widgets = {'useris': forms.HiddenInput(), 'data': DateInput}
+
+
+class ServiseQuantityPriceForm(forms.ModelForm):
+    service_id = forms.CharField(widget=forms.TextInput(attrs={
+        "class": "form-control",
+        "placeholder": "service"
+    }))
+    quantity = forms.CharField(widget=forms.TextInput(attrs={
+        'type': "number",
+        "class": "form-control",
+        "placeholder": "quantity"
+    }))
+
+    price = forms.CharField(widget=forms.TextInput(attrs={
+        "class": "form-control",
+        "placeholder": "price"
+    }))
+    class Meta:
+        model = OrderLine
+        fields = ['service_id', 'quantity', 'price']
+        # widgets = {'order_id': forms.HiddenInput()}

@@ -1,12 +1,12 @@
 {% extends "base.html" %}
-
+{% load crispy_forms_filters %}
 {% block content %}
-    <h1>Mano užsakymas</h1>
+    <h1>My order</h1>
     <article class="media content-section">
         <div class="media-body">
             <div class="article-metadata">
                 <a class="mr-2">{{ object.useris }}</a>
-                <small class="text-muted">{{ object.data|date:"Y-m-d, f" }}</small>
+                <small class="text-muted">{{ object.data|date:"d - M , Y" }}</small>
             </div>
             <p class="article-content">{{ object.car_id }}</p>
             <p><strong>Suma:</strong> {{ object.is_viso }}</p>
@@ -17,14 +17,22 @@
                         <hr>
                         <p><strong>Paslauga:</strong> {{ eilute.service_id }}
                             <strong>Kiekis:</strong> {{ eilute.quantity }}<strong> Kaina:</strong> {{ eilute.price }}
-                            <strong> Suma:</strong> {{ eilute.suma }}</p>
+                            <strong> Suma:</strong> {{ eilute.suma }}
+                            <a href="{% url 'update_line' object.pk eilute.pk %}" class="btn btn-outline-success">Update
+                                line</a>
+                            <a href="{% url 'delete_line' object.pk eilute.pk %}" class="btn btn-outline-danger">Delete
+                                line</a>
+                        </p>
                     {% endfor %}
                 {% endif %}
             </div>
-            <br>
+            <hr>
             {% if object.useris == user %}
                 <div>
-                    <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'update_my_order' object.id %}">Redaguoti</a>
+                    <a href="{% url 'create_line' object.pk %}"
+                       class="btn btn-outline-success">Create line</a>
+                    <a class="btn btn-secondary btn-sm mt-1 mb-1"
+                       href="{% url 'update_my_order' object.id %}">Redaguoti</a>
                     <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'my-order-delete' object.id %}">Ištrinti</a>
                 </div>
             {% endif %}

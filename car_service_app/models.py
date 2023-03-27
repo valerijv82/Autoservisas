@@ -1,6 +1,7 @@
 from PIL import Image
 from django.db import models
 from django.contrib.auth.models import User
+from django.urls import reverse
 from django.utils import timezone
 from tinymce.models import HTMLField
 
@@ -101,6 +102,9 @@ class Order(models.Model):
             is_viso += float(line.price) * float(line.quantity)
         return is_viso
 
+    def get_absolute_url(self):
+        return reverse('my_order', args=[str(self.id)])
+
 
 class OrderLine(models.Model):
     service_id = models.ForeignKey("Service", on_delete=models.SET_NULL, null=True)
@@ -120,6 +124,12 @@ class OrderLine(models.Model):
     @property
     def suma(self):
         return float(self.quantity) * float(self.price)
+
+    def is_valid(self):
+        pass
+
+    def get_absolute_url(self):
+        return reverse('user_add_line_to_order', kwargs={'pk': self.pk})
 
 
 class OrderReview(models.Model):
