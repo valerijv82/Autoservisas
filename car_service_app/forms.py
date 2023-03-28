@@ -36,24 +36,3 @@ class UserOrderCreateForm(forms.ModelForm):
         model = Order
         fields = ['car_id', 'data', 'servis']
         widgets = {'useris': forms.HiddenInput(), 'data': DateInput}
-
-
-class ServiseQuantityPriceForm(forms.ModelForm):
-    service_id = forms.CharField(widget=forms.TextInput(attrs={
-        "class": "form-control",
-        "placeholder": "service"
-    }))
-    quantity = forms.CharField(widget=forms.TextInput(attrs={
-        'type': "number",
-        "class": "form-control",
-        "placeholder": "quantity"
-    }))
-
-    price = forms.CharField(widget=forms.TextInput(attrs={
-        "class": "form-control",
-        "placeholder": "price"
-    }))
-    class Meta:
-        model = OrderLine
-        fields = ['service_id', 'quantity', 'price']
-        # widgets = {'order_id': forms.HiddenInput()}

@@ -8,8 +8,10 @@ from django.contrib.auth.forms import User
 from django.views.decorators.csrf import csrf_protect
 from django.contrib import messages
 from django.views.generic.edit import FormMixin
-from .forms import OrderReviewForm, ProfilisUpdateForm, UserUpdateForm, UserOrderCreateForm, ServiseQuantityPriceForm
+from .forms import OrderReviewForm, ProfilisUpdateForm, UserUpdateForm, UserOrderCreateForm
 from .models import Car, Order, Service, OrderLine
+
+from django.utils.translation import gettext as _
 
 
 def home(request):
@@ -142,7 +144,7 @@ class UpdateLine(LoginRequiredMixin, generic.UpdateView):
 
 class DeleteLine(LoginRequiredMixin, generic.DeleteView):
     model = OrderLine
-    success_url = '/service/my_orders/'
+    # success_url = '/service/my_orders/'
     template_name = 'delete_orderline.html'
 
     def get_success_url(self) -> str:

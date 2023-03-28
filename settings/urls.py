@@ -23,7 +23,8 @@ urlpatterns = [
                   path('admin/', admin.site.urls),
                   path('service/', include("car_service_app.urls")),
                   path("", RedirectView.as_view(url='service/', permanent=True)),
-                  path('tinymce/', include('tinymce.urls'))
+                  path('tinymce/', include('tinymce.urls')),
+                  path('i18n/', include('django.conf.urls.i18n')),
 
               ] + (
                       static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

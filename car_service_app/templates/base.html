@@ -8,6 +8,7 @@
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <!-- Add additional CSS in static file -->
     {% load static %}
+    {% load i18n %}
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
@@ -20,23 +21,41 @@
     <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
         <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
             <li class="nav-item active">
-                <a class="nav-link" href="{% url 'home' %}">Home</a>
+                <a class="nav-link" href="{% url 'home' %}">{% trans 'Home' %}</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'index' %}">Service</a>
+                <a class="nav-link" href="{% url 'index' %}">{% trans 'Service' %}</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'cars' %}">Cars</a>
+                <a class="nav-link" href="{% url 'cars' %}">{% trans 'Cars' %}</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'uzsakymai' %}">Orders</a>
+                <a class="nav-link" href="{% url 'uzsakymai' %}">{% trans 'Orders' %}</a>
             </li>
+            {% load i18n %}
+            <form action="{% url 'set_language' %}" method="post">
+                {% csrf_token %}
+                <input name="next" type="hidden" value="{{ redirect_to }}"/>
+                <label>
+                    <select name="language" onchange="this.form.submit()">
+                        {% load static %}
+                        {% get_current_language as LANGUAGE_CODE %}
+                        {% get_available_languages as LANGUAGES %}
+                        {% for lang in LANGUAGES %}
+                            <option style="background-image: url({% static 'img/lt.png' %});" value="{{ lang.0 }}"
+                                    {% if lang.0 == LANGUAGE_CODE %} selected="selected" {% endif %}>
+                                {{ lang.1 }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </label>
+            </form>
             {% if user.is_authenticated %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'my_orders' %}">My orders</a>
+                    <a class="nav-link" href="{% url 'my_orders' %}">{% trans 'My orders' %}</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'my_create_new_order' %}">Create new order</a>
+                    <a class="nav-link" href="{% url 'my_create_new_order' %}">{% trans 'Create new order' %}</a>
                 </li>
                 <li class="nav-item"><a class="nav-link" href="{% url 'profile' %}">
                     <svg class="bi bi-person" width="1.5em" height="1.5em" viewBox="0 0 16 16" fill="currentColor"
@@ -47,14 +66,14 @@
                     </svg>
                     {{ user.get_username }}</a></li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                    <a class="nav-link" href="{% url 'logout' %}">{% trans 'Logout' %}</a>
                 </li>
             {% else %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'login' %}">Login</a>
+                    <a class="nav-link" href="{% url 'login' %}">{% trans 'Login' %}</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'register' %}">Register</a>
+                    <a class="nav-link" href="{% url 'register' %}">{% trans 'Register' %}</a>
                 </li>
             {% endif %}
         </ul>
@@ -62,7 +81,7 @@
             <label>
                 <input name="query" class="form-control mr-sm-2" type="search" placeholder="Search">
             </label>
-            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">{% trans 'Search' %}</button>
         </form>
     </div>
 </nav>
